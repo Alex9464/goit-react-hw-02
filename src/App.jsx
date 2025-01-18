@@ -14,15 +14,24 @@ const App = () => {
     }));
   };
 
+  const resetFeedback = () => {
+    setFeedback({
+      good: 0,
+      neutral: 0,
+      bad: 0,
+    });
+  };
+
   const totalFeedback = feedback.good + feedback.neutral + feedback.bad;
+  const positivePercentage = totalFeedback > 0 ? Math.round((feedback.good / totalFeedback) * 100) : 0;
 
   return (
     <div>
       <h1>Sip Happens Café</h1>
       <p>Please leave your feedback about our service by selecting one of the options below.</p>
-      <Options updateFeedback={updateFeedback} />
+      <Options updateFeedback={updateFeedback} resetFeedback={resetFeedback} totalFeedback={totalFeedback} />
       {totalFeedback > 0 ? (
-        <Feedback feedback={feedback} totalFeedback={totalFeedback} />
+        <Feedback feedback={feedback} totalFeedback={totalFeedback} positivePercentage={positivePercentage} />
       ) : (
         <Notification message="No feedback given yet." />
       )}
@@ -30,12 +39,13 @@ const App = () => {
   );
 };
 
-const Options = ({ updateFeedback }) => {
+const Options = ({ updateFeedback, resetFeedback, totalFeedback }) => {
   return (
     <div>
       <button onClick={() => updateFeedback("good")}>Good</button>
       <button onClick={() => updateFeedback("neutral")}>Neutral</button>
       <button onClick={() => updateFeedback("bad")}>Bad</button>
+      {totalFeedback > 0 && <button onClick={resetFeedback}>Reset</button>}
     </div>
   );
 };
@@ -44,7 +54,7 @@ const Notification = ({ message }) => {
   return <p>{message}</p>;
 };
 
-const Feedback = ({ feedback, totalFeedback }) => {
+const Feedback = ({ feedback, totalFeedback, positivePercentage }) => {
   return (
     <div>
       <h2>Feedback Summary</h2>
@@ -52,7 +62,9 @@ const Feedback = ({ feedback, totalFeedback }) => {
       <p>Neutral: {feedback.neutral}</p>
       <p>Bad: {feedback.bad}</p>
       <p>Total Feedback: {totalFeedback}</p>
+      <p>Positive Feedback: {positivePercentage}%</p>
     </div>
   );
 };
+
 export default App
