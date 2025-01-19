@@ -1,6 +1,6 @@
 const Feedback = ({ feedbacks, totalFeedback }) => {
   const positiveFeedback = totalFeedback 
-    ? Math.round(((feedbacks.good + feedbacks.neutral) / totalFeedback) * 100)
+    ? Math.round((feedbacks.good / totalFeedback) * 100)
     : 0;
 
   return (

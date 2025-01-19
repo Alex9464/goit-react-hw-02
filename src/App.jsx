@@ -1,15 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Description from './components/Description/Description';
 import Options from './components/Options/Options';
 import Feedback from './components/Feedback/Feedback';
 import Notification from './components/Notification/Notification';
 
 const App = () => {
-  const [feedback, setFeedback] = useState({
-    good: 0,
-    neutral: 0,
-    bad: 0,
+  const [feedback, setFeedback] = useState(() => {
+    const storedFeedback = localStorage.getItem('feedback');
+    return storedFeedback
+      ? JSON.parse(storedFeedback)
+      : { good: 0, neutral: 0, bad: 0 };
   });
+
+  useEffect(() => {
+    localStorage.setItem('feedback', JSON.stringify(feedback));
+  }, [feedback]);
 
   const updateFeedback = (feedbackType) => {
     setFeedback((prevFeedback) => ({
@@ -24,7 +29,7 @@ const App = () => {
 
   const totalFeedback = feedback.good + feedback.neutral + feedback.bad;
   const positiveFeedback = totalFeedback
-    ? Math.round(((feedback.good + feedback.neutral) / totalFeedback) * 100)
+    ? Math.round((feedback.good / totalFeedback) * 100)
     : 0;
 
   return (
@@ -42,7 +47,7 @@ const App = () => {
           positiveFeedback={positiveFeedback}
         />
       ) : (
-        <Notification message="No feedback given yet." />
+        <Notification />
       )}
     </div>
   );
