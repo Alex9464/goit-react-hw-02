@@ -1,4 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import Description from './components/Description/Description';
+import Options from './components/Options/Options';
+import Feedback from './components/Feedback/Feedback';
+import Notification from './components/Notification/Notification';
 
 const App = () => {
   const [feedback, setFeedback] = useState({
@@ -15,23 +19,28 @@ const App = () => {
   };
 
   const resetFeedback = () => {
-    setFeedback({
-      good: 0,
-      neutral: 0,
-      bad: 0,
-    });
+    setFeedback({ good: 0, neutral: 0, bad: 0 });
   };
 
   const totalFeedback = feedback.good + feedback.neutral + feedback.bad;
-  const positivePercentage = totalFeedback > 0 ? Math.round((feedback.good / totalFeedback) * 100) : 0;
+  const positiveFeedback = totalFeedback
+    ? Math.round(((feedback.good + feedback.neutral) / totalFeedback) * 100)
+    : 0;
 
   return (
-    <div>
-      <h1>Sip Happens Café</h1>
-      <p>Please leave your feedback about our service by selecting one of the options below.</p>
-      <Options updateFeedback={updateFeedback} resetFeedback={resetFeedback} totalFeedback={totalFeedback} />
+    <div className="box">
+      <Description />
+      <Options
+        updateFeedback={updateFeedback}
+        resetFeedback={resetFeedback}
+        totalFeedback={totalFeedback}
+      />
       {totalFeedback > 0 ? (
-        <Feedback feedback={feedback} totalFeedback={totalFeedback} positivePercentage={positivePercentage} />
+        <Feedback
+          feedbacks={feedback}
+          totalFeedback={totalFeedback}
+          positiveFeedback={positiveFeedback}
+        />
       ) : (
         <Notification message="No feedback given yet." />
       )}
@@ -39,32 +48,4 @@ const App = () => {
   );
 };
 
-const Options = ({ updateFeedback, resetFeedback, totalFeedback }) => {
-  return (
-    <div>
-      <button onClick={() => updateFeedback("good")}>Good</button>
-      <button onClick={() => updateFeedback("neutral")}>Neutral</button>
-      <button onClick={() => updateFeedback("bad")}>Bad</button>
-      {totalFeedback > 0 && <button onClick={resetFeedback}>Reset</button>}
-    </div>
-  );
-};
-
-const Notification = ({ message }) => {
-  return <p>{message}</p>;
-};
-
-const Feedback = ({ feedback, totalFeedback, positivePercentage }) => {
-  return (
-    <div>
-      <h2>Feedback Summary</h2>
-      <p>Good: {feedback.good}</p>
-      <p>Neutral: {feedback.neutral}</p>
-      <p>Bad: {feedback.bad}</p>
-      <p>Total Feedback: {totalFeedback}</p>
-      <p>Positive Feedback: {positivePercentage}%</p>
-    </div>
-  );
-};
-
-export default App
+export default App;
